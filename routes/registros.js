@@ -2,6 +2,21 @@ const express = require('express');
 const router = express.Router();
 const supabase = require('../data/supabase');
 
+// GET /api/registros
+router.get('/', async (req, res, next) => {
+  try {
+    const { data, error } = await supabase
+      .from('registros_leitura')
+      .select('*')
+      .order('data_registro', { ascending: false });
+
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // POST /api/registros
 router.post('/', async (req, res, next) => {
   try {
@@ -15,7 +30,6 @@ router.post('/', async (req, res, next) => {
       });
     }
 
-    // Verifica registro de hoje
     const { data: existente, error: fetchError } = await supabase
       .from('registros_leitura')
       .select('minutos')
@@ -35,7 +49,6 @@ router.post('/', async (req, res, next) => {
       });
     }
 
-    // Upsert
     const { data, error } = await supabase
       .from('registros_leitura')
       .upsert({
@@ -57,7 +70,7 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-// GET /api/registros/aluno/:aluno_id (histórico)
+// GET /api/registros/aluno/:aluno_id
 router.get('/aluno/:aluno_id', async (req, res, next) => {
   try {
     const { aluno_id } = req.params;
