@@ -1,5 +1,4 @@
-require('dotenv').config(); // ⚠️ DEVE SER A PRIMEIRA LINHA
-
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const logger = require('./middlewares/logger');
@@ -9,6 +8,8 @@ const alunosRoutes = require('./routes/alunos');
 const registrosRoutes = require('./routes/registros');
 const rankingsRoutes = require('./routes/rankings');
 const turmasRoutes = require('./routes/turmas');
+// Se tiver admin routes:
+// const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ app.use('/api/alunos', alunosRoutes);
 app.use('/api/registros', registrosRoutes);
 app.use('/api/rankings', rankingsRoutes);
 app.use('/api/turmas', turmasRoutes);
+// app.use('/api/admin', adminRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -28,6 +30,10 @@ app.get('/api/health', (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando na porta ${PORT}`);
-});
+// Exportar para Vercel (não usar app.listen)
+module.exports = app;
+
+// Se quiser manter para rodar localmente, pode fazer:
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => console.log(`🚀 Local: http://localhost:${PORT}`));
+}
