@@ -1,13 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const logger = require('./middlewares/logger');
-const errorHandler = require('./middlewares/errorHandler');
+const logger = require('../middlewares/logger');
+const errorHandler = require('../middlewares/errorHandler');
 
-const alunosRoutes = require('./routes/alunos');
-const registrosRoutes = require('./routes/registros');
-const rankingsRoutes = require('./routes/rankings');
-const turmasRoutes = require('./routes/turmas');
+const alunosRoutes = require('../routes/alunos');
+const registrosRoutes = require('../routes/registros');
+const rankingsRoutes = require('../routes/rankings');
+const turmasRoutes = require('../routes/turmas');
 
 const app = express();
 app.use(cors());
@@ -25,11 +25,4 @@ app.get('/api/health', (req, res) => {
 
 app.use(errorHandler);
 
-// Exporta para Vercel (não use app.listen em produção)
 module.exports = app;
-
-// Para testes locais (opcional)
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`🚀 Local: http://localhost:${PORT}`));
-}
